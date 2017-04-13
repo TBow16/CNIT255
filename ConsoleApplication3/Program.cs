@@ -18,6 +18,7 @@ namespace ConsoleApplication2
         ArrayList userList = new ArrayList();
         ArrayList rewardList = new ArrayList();
 
+        //Rank Class allows leveling system to be implemented in to the users
         public class Rank : Bonus
         {
             public Rank()
@@ -55,6 +56,7 @@ namespace ConsoleApplication2
             }
         }
         
+        //Rewards that can be redeemed many times
         public class Rewards
         {
             private int levelRequirement;
@@ -64,6 +66,7 @@ namespace ConsoleApplication2
 
         }
 
+        //Rewards that can only be used once
         public class UniqueRewards : Rewards
         {
             Redemtion re = new Redemtion();
@@ -71,6 +74,7 @@ namespace ConsoleApplication2
 
         }
 
+        //Tracking when a unique reward is claimed
         public class Redemtion
         {
             Rewards r = new Rewards();
@@ -79,6 +83,7 @@ namespace ConsoleApplication2
 
         }
 
+        //Starting user class
         public class ListedUsers
         {
             Rank ra = new Rank();
@@ -111,6 +116,7 @@ namespace ConsoleApplication2
             }
         }
 
+        //After a certian level users are upgraded
         public class UpgradedUser : ListedUsers
         {
             private bool extrasPermissions;
@@ -121,6 +127,7 @@ namespace ConsoleApplication2
             }
         }
 
+        //Way of seperating admins from users
         public class MasterUser : UpgradedUser
         {
             private bool controlval;
@@ -140,6 +147,7 @@ namespace ConsoleApplication2
 
         public void Start()
         {
+            //Creates Bot
             _client = new DiscordClient(x =>
             {
                 x.AppName = "255 Project";
@@ -148,6 +156,7 @@ namespace ConsoleApplication2
                 x.LogHandler = Log;
             });
 
+            //Defines command Prefix
             _client.UsingCommands(x =>
             {
                 x.PrefixChar = '!';
@@ -155,6 +164,7 @@ namespace ConsoleApplication2
                 x.HelpMode = HelpMode.Public;
             });
 
+            //Creates an echo chamber
             _client.MessageReceived += async (s, e) =>
             {
                 if (!e.Message.IsAuthor)
@@ -166,12 +176,14 @@ namespace ConsoleApplication2
                 }
             };
 
+            //Increases users score when speaking and adds new users to a list
             _client.MessageReceived += async (s, e) =>
             {
                 if (!e.Message.IsAuthor)
                 {
                     int c = searchArrayList(e.User.ToString());
 
+                    //Adds new user
                     if (c == userList.Count)
                     {
                         ListedUsers z = new ListedUsers();
@@ -182,6 +194,7 @@ namespace ConsoleApplication2
                         userList.Add(z);
                     }
 
+                    //Adds points to profile
                     if (c < userList.Count)
                     {
                         ListedUsers z = (ListedUsers)userList[c];
@@ -195,19 +208,25 @@ namespace ConsoleApplication2
                 }
             };
 
+            //Token for connection to bot
             var token = "Mjg2MjczMzYxODkyMzQzODE5.C5emvA.Lc-gsSz5ivsaUTvfQe-aw-lqhRM";
 
+            //Allows for commeand creation 
             CreateCommands();
 
+            //Connects bot to server
             _client.ExecuteAndWait(async () =>
             {
                 await _client.Connect(token, TokenType.Bot);
             });
         }
 
+        //User created commands
         public void CreateCommands()
         {
             var cService = _client.GetService<CommandService>();
+            
+            //Ping 
             cService.CreateCommand("Ping")
                 .Description("Returns Pong")
                 .Do(async (e) =>
@@ -215,6 +234,7 @@ namespace ConsoleApplication2
                     await e.Channel.SendMessage("Pong");
                 });
 
+            //Hello
             cService.CreateCommand("Hello")
                 .Description("Greets user")
                 .Do(async (e) =>
@@ -223,6 +243,7 @@ namespace ConsoleApplication2
                     await e.Channel.SendMessage(toReturn);
                 });
 
+            //Cat
             cService.CreateCommand("Cat")
                 .Description("Sends a cat to a Channel")
                 .Do(async (e) =>
@@ -231,6 +252,7 @@ namespace ConsoleApplication2
                     await e.Channel.SendMessage("Your cat has arrived!");
                 });
 
+            //Roll
             cService.CreateCommand("Roll")
                 .Description("Rolls a die of your choice.")
                 .Parameter("sides", ParameterType.Required)
@@ -255,6 +277,7 @@ namespace ConsoleApplication2
                     }
                 });
 
+            //Score
             cService.CreateCommand("Score")
                 .Description("Gets your chat score")
                 .Do(async (e) =>
@@ -274,6 +297,8 @@ namespace ConsoleApplication2
             Console.WriteLine($"[{e.Severity}] [{e.Severity}] {e.Message}");
         }
 
+        //Methoed torandomly seect a number from 1 to a defines value
+        //Used in the Roll Methoed
         private int Roll(int x)
         {
             int result;
@@ -283,6 +308,8 @@ namespace ConsoleApplication2
             return result;
         }
 
+        //Searches for users in a list
+        //Used in the process of add user not listed and define whoes to add points to
         private int searchArrayList(string x)
         {
             int z;
@@ -299,7 +326,8 @@ namespace ConsoleApplication2
 
             return z;
         }
-
+        
+        //Methoed to add score to a users profle
         private void addScore(string x)
         {
             int z = searchArrayList(x);
@@ -310,6 +338,7 @@ namespace ConsoleApplication2
         }
     }
 
+    //Interface to add extra points to a users profile so they can be boosted to ugraded user
     interface Bonus
     {
         void addBonus(int x);
