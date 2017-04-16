@@ -194,16 +194,41 @@ namespace ConsoleApplication2
                         userList.Add(z);
                     }
 
-                    //Adds points to profile
+                    //Adds points to profile dependign on class
                     if (c < userList.Count)
                     {
-                        ListedUsers z = (ListedUsers)userList[c];
+                        if (classTest(c) == 1)
+                        {
+                            ListedUsers z = (ListedUsers)userList[c];
 
-                        z.increaseScore();
+                            z.increaseScore();
 
-                        userList.RemoveAt(c);
+                            userList.RemoveAt(c);
 
-                        userList.Add(z);
+                            userList.Add(z);
+                        }
+
+                        else if (classTest(c) == 2)
+                        {
+                            UpgradedUser z = (UpgradedUser)userList[c];
+
+                            z.increaseScore();
+
+                            userList.RemoveAt(c);
+
+                            userList.Add(z);
+                        }
+
+                        else
+                        {
+                            MasterUser z = (MasterUser)userList[c];
+
+                            z.increaseScore();
+
+                            userList.RemoveAt(c);
+
+                            userList.Add(z);
+                        }
                     }
                 }
             };
@@ -297,7 +322,7 @@ namespace ConsoleApplication2
             Console.WriteLine($"[{e.Severity}] [{e.Severity}] {e.Message}");
         }
 
-        //Methoed torandomly seect a number from 1 to a defines value
+        //Method to randomly select a number from 1 to a defines value
         //Used in the Roll Methoed
         private int Roll(int x)
         {
@@ -327,7 +352,7 @@ namespace ConsoleApplication2
             return z;
         }
         
-        //Methoed to add score to a users profle
+        //Method to add score to a users profle
         private void addScore(string x)
         {
             int z = searchArrayList(x);
@@ -335,6 +360,23 @@ namespace ConsoleApplication2
             ListedUsers Temp = (ListedUsers)userList[z];
 
             Temp.increaseScore();
+        }
+        
+        //test class for type
+        private int classTest(int x)
+        {
+            if (userList[x].GetType() == typeof(ListedUsers))
+            {
+                return 1;
+            }
+            else if (userList[x].GetType() == typeof(UpgradedUser))
+            {
+                return 2;
+            }
+            else
+            {
+                return 3;
+            }
         }
     }
 
