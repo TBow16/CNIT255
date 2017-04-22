@@ -59,11 +59,19 @@ namespace ConsoleApplication2
         //Rewards that can be redeemed many times
         public class Rewards
         {
+            public Rewards()
+            {
+
+            }
+
+            public Rewards(string x, int y)
+            {
+                name = x;
+                levelRequirement = y;
+            }
+            
             private int levelRequirement;
             private string description;
-
-
-
         }
 
         //Rewards that can only be used once
@@ -314,6 +322,28 @@ namespace ConsoleApplication2
                     var output = $"Your Score is {temp.getScore()}";
 
                     await e.Channel.SendMessage(output);
+                });
+            
+            //add Reward
+            cService.CreateCommand("NewReward")
+                .Description("Creates a new reward with the perameters of a name and level requirement")
+                .Parameter("Name", ParameterType.Required)
+                .Parameter("Level", ParameterType.Required)
+                .Do(async (e) =>
+                {
+                    string Name = e.GetArg("Name");
+                    int Level;
+
+                    if (int.TryParse(e.GetArg("Level"), out Level) == false)
+                    {
+                        await e.Channel.SendMessage("Invaild Level");
+                    }
+
+                    Rewards x = new Rewards(Name, Level);
+
+                    rewardList.Add(x);
+
+                    await e.Channel.SendMessage("Reward has been added");
                 });
         }
 
