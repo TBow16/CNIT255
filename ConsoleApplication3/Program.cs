@@ -211,9 +211,23 @@ namespace ConsoleApplication2
 
                             z.increaseScore();
 
-                            userList.RemoveAt(c);
+                            //Adds points to user who is not at upgrade point
+                            if (z.getScore() < 1000)
+                            {
+                                userList.RemoveAt(c);
 
-                            userList.Add(z);
+                                userList.Add(z);
+                            }
+
+                            //Upgrades a users status
+                            if (z.getScore() >= 1000)
+                            {
+                                userList.RemoveAt(c);
+
+                                UpgradedUser x = (UpgradedUser)z;
+
+                                userList.Add(x);
+                            }
                         }
 
                         else if (classTest(c) == 2)
