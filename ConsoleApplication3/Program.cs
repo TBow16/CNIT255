@@ -83,7 +83,7 @@ namespace ConsoleApplication2
             {
                 return this.levelRequirement;
             }
-            
+
             public void setName(string x)
             {
                 name = x;
@@ -171,6 +171,16 @@ namespace ConsoleApplication2
         //Starting user class
         public class ListedUsers
         {
+            public ListedUsers()
+            {
+
+            }
+
+            public ListedUsers(string x)
+            {
+                user = x;
+            }
+
             Rank ra = new Rank();
 
             private string user;
@@ -228,7 +238,7 @@ namespace ConsoleApplication2
                 return this.controlval;
             }
         }
-        
+
         //Names of nearby pizza places
         public class Pizza
         {
@@ -345,9 +355,13 @@ namespace ConsoleApplication2
                             {
                                 userList.RemoveAt(c);
 
-                                UpgradedUser x = (UpgradedUser)z;
+                                UpgradedUser x = new UpgradedUser();
+
+                                x.setUser(e.User.ToString());
 
                                 userList.Add(x);
+
+                                await e.Channel.SendMessage("You have been promoted to upgraded user, but your score has been reset");
                             }
                         }
 
@@ -488,9 +502,9 @@ namespace ConsoleApplication2
                 {
                     int x = rewardList.Count;
 
-                    for(int y = 0; y < x; y++)
+                    for (int y = 0; y < x; y++)
                     {
-                        Rewards c = (Rewards) rewardList[y];
+                        Rewards c = (Rewards)rewardList[y];
 
                         string v = c.getName();
 
@@ -501,20 +515,20 @@ namespace ConsoleApplication2
             //Command to claim the reward
             cService.CreateCommand("claimreward")
                 .Description("Notifies the server that you will be claiming said reward.")
-                .Parameter("Reward Name", ParameterType.Required)
+                .Parameter("RewardName", ParameterType.Required)
                 .Do(async (e) =>
                 {
-                    string x = e.GetArg("Reward Name");
+                    string x = e.GetArg("RewardName");
                     int y = searchRewardsArrayList(x);
 
-                    Rewards Temp = (Rewards) rewardList[y];
+                    Rewards Temp = (Rewards)rewardList[y];
 
                     var results = $"{e.User.Mention} has claimed the reward of {Temp.getName()}";
 
                     await e.Channel.SendMessage(results);
 
                 });
-            
+
             //add Unique Reward
             cService.CreateCommand("NewUniqueReward")
                 .Description("Creates a new reward with the perameters of a name and level requirement and a limit of uses")
@@ -547,7 +561,31 @@ namespace ConsoleApplication2
 
                     await e.Channel.SendMessage("Reward has been added");
                 });
-            
+
+            //Promotion command increases the users score by a defined amount
+            cService.CreateCommand("Promote")
+                .Description("increases your score")
+                .Parameter("Amount")
+                .Do(async (e) =>
+                {
+                    int amount;
+
+                    if (int.TryParse(e.GetArg("Amount"), out amount) == false)
+                    {
+                        await e.Channel.SendMessage("The amount to be added must be a valid whole number");
+                    }
+                    else
+                    {
+                        int x = searchUserArrayList(e.User.ToString());
+                        ListedUsers y = (ListedUsers)userList[x];
+
+                        y.addBonus(amount);
+
+                        var result = $"Congratulations {e.User.Mention}! You have gained {amount} score.";
+                        await e.Channel.SendMessage(result);
+                    }
+                });
+
         }
 
         public void Log(object sender, LogMessageEventArgs e)
