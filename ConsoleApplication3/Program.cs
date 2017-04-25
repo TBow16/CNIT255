@@ -96,6 +96,26 @@ namespace ConsoleApplication2
             {
                 return this.Limit;
             }
+            
+            public void setRemptionDate(string x)
+            {
+                re.setRemptionDate(x);
+            }
+
+            public void setUser(string x)
+            {
+                re.setUser(x);
+            }
+
+            public string getDate()
+            {
+                return re.getDate();
+            }
+
+            public string getUser()
+            {
+                return re.getUser();
+            }
         }
 
         //Tracking when a unique reward is claimed
