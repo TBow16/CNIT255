@@ -101,9 +101,28 @@ namespace ConsoleApplication2
         //Tracking when a unique reward is claimed
         public class Redemtion
         {
-            Rewards r = new Rewards();
-
             private string redemptionDate;
+            private string lastUser;
+
+            public void setRemptionDate(string x)
+            {
+                redemptionDate = x;
+            }
+
+            public void setUser(string x)
+            {
+                lastUser = x;
+            }
+
+            public string getDate()
+            {
+                return this.redemptionDate;
+            }
+
+            public string getUser()
+            {
+                return this.lastUser;
+            }
 
         }
 
