@@ -549,7 +549,7 @@ namespace ConsoleApplication2
 
             for (z = 0; z < rewardList.Count; z++)
             {
-                Rewards Temp = (Rewards)userList[z];
+                Rewards Temp = (Rewards)rewardList[z];
 
                 if (Temp.getName().Equals(x))
                 {
@@ -567,7 +567,7 @@ namespace ConsoleApplication2
 
             for (z = 0; z < pizzaList.Count; z++)
             {
-                Pizza Temp = (Pizza)userList[z];
+                Pizza Temp = (Pizza)pizzaList[z];
 
                 if (Temp.getName().Equals(x))
                 {
