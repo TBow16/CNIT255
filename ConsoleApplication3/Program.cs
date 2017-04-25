@@ -79,7 +79,23 @@ namespace ConsoleApplication2
         {
             Redemtion re = new Redemtion();
 
+            private int Limit;
+            private int amountUsed;
 
+            public void setLimit(int x)
+            {
+                Limit = x;
+            }
+
+            public void increaceUsed()
+            {
+                amountUsed++;
+            }
+
+            public int getLimit()
+            {
+                return this.Limit;
+            }
         }
 
         //Tracking when a unique reward is claimed
