@@ -458,6 +458,23 @@ namespace ConsoleApplication2
 
                     await e.Channel.SendMessage("Reward has been added");
                 });
+            
+            //List Rewards
+            cService.CreateCommand("ListRewards")
+                .Description("Lists available rewards")
+                .Do(async (e) =>
+                {
+                    int x = rewardList.Count;
+
+                    for(int y = 0; y < x; y++)
+                    {
+                        Rewards c = (Rewards) rewardList[y];
+
+                        string v = c.getName();
+
+                        await e.Channel.SendMessage(v);
+                    }
+                });
         }
 
         public void Log(object sender, LogMessageEventArgs e)
