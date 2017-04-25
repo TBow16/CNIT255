@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +17,7 @@ namespace ConsoleApplication2
     {
         ArrayList userList = new ArrayList();
         ArrayList rewardList = new ArrayList();
+        ArrayList pizzaList = new ArrayList();
 
         //Rank Class allows leveling system to be implemented in to the users
         public class Rank : Bonus
@@ -55,7 +56,7 @@ namespace ConsoleApplication2
                 score = score + x;
             }
         }
-        
+
         //Rewards that can be redeemed many times
         public class Rewards
         {
@@ -69,9 +70,19 @@ namespace ConsoleApplication2
                 name = x;
                 levelRequirement = y;
             }
-            
+
             private int levelRequirement;
-            private string description;
+            private string name;
+
+            public string getName()
+            {
+                return this.name;
+            }
+
+            public int getLevel()
+            {
+                return this.levelRequirement;
+            }
         }
 
         //Rewards that can only be used once
@@ -96,7 +107,7 @@ namespace ConsoleApplication2
             {
                 return this.Limit;
             }
-            
+
             public void setRemptionDate(string x)
             {
                 re.setRemptionDate(x);
@@ -116,6 +127,7 @@ namespace ConsoleApplication2
             {
                 return re.getUser();
             }
+
         }
 
         //Tracking when a unique reward is claimed
@@ -190,6 +202,22 @@ namespace ConsoleApplication2
             }
 
         }
+
+        //Way of seperating admins from users
+        public class MasterUser : UpgradedUser
+        {
+            private bool controlval;
+
+            public MasterUser()
+            {
+                controlval = true;
+            }
+
+            public bool getControl()
+            {
+                return this.controlval;
+            }
+        }
         
         //Names of nearby pizza places
         public class Pizza
@@ -226,22 +254,6 @@ namespace ConsoleApplication2
             public string getPhone()
             {
                 return this.PhoneNumber;
-            }
-        }
-
-        //Way of seperating admins from users
-        public class MasterUser : UpgradedUser
-        {
-            private bool controlval;
-
-            public MasterUser()
-            {
-                controlval = true;
-            }
-
-            public bool getControl()
-            {
-                return this.controlval;
             }
         }
 
@@ -288,7 +300,7 @@ namespace ConsoleApplication2
             {
                 if (!e.Message.IsAuthor)
                 {
-                    int c = searchArrayList(e.User.ToString());
+                    int c = searchUserArrayList(e.User.ToString());
 
                     //Adds new user
                     if (c == userList.Count)
@@ -371,7 +383,7 @@ namespace ConsoleApplication2
         public void CreateCommands()
         {
             var cService = _client.GetService<CommandService>();
-            
+
             //Ping 
             cService.CreateCommand("Ping")
                 .Description("Returns Pong")
@@ -428,7 +440,7 @@ namespace ConsoleApplication2
                 .Description("Gets your chat score")
                 .Do(async (e) =>
                 {
-                    int x = searchArrayList(e.User.ToString());
+                    int x = searchUserArrayList(e.User.ToString());
 
                     ListedUsers temp = (ListedUsers)userList[x];
 
@@ -436,7 +448,7 @@ namespace ConsoleApplication2
 
                     await e.Channel.SendMessage(output);
                 });
-            
+
             //add Reward
             cService.CreateCommand("NewReward")
                 .Description("Creates a new reward with the perameters of a name and level requirement")
@@ -458,9 +470,9 @@ namespace ConsoleApplication2
 
                     await e.Channel.SendMessage("Reward has been added");
                 });
-            
+
             //List Rewards
-            cService.CreateCommand("ListRewards")
+            cService.CreateCommand("listrewards")
                 .Description("Lists available rewards")
                 .Do(async (e) =>
                 {
@@ -475,6 +487,24 @@ namespace ConsoleApplication2
                         await e.Channel.SendMessage(v);
                     }
                 });
+
+            //Command to claim the reward
+            cService.CreateCommand("claimreward")
+                .Description("Notifies the server that you will be claiming said reward.")
+                .Parameter("Reward Name", ParameterType.Required)
+                .Do(async (e) =>
+                {
+                    string x = e.GetArg("Reward Name");
+                    int y = searchRewardsArrayList(x);
+
+                    Rewards Temp = (Rewards) rewardList[y];
+
+                    var results = $"{e.User.Mention} has claimed the reward of {Temp.getName()}";
+
+                    await e.Channel.SendMessage(results);
+
+                });
+            
         }
 
         public void Log(object sender, LogMessageEventArgs e)
@@ -482,7 +512,7 @@ namespace ConsoleApplication2
             Console.WriteLine($"[{e.Severity}] [{e.Severity}] {e.Message}");
         }
 
-        //Method to randomly select a number from 1 to a defines value
+        //Method to randomly select a number from 1 to a value defined by the user
         //Used in the Roll Methoed
         private int Roll(int x)
         {
@@ -495,7 +525,7 @@ namespace ConsoleApplication2
 
         //Searches for users in a list
         //Used in the process of add user not listed and define whoes to add points to
-        private int searchArrayList(string x)
+        private int searchUserArrayList(string x)
         {
             int z;
 
@@ -511,17 +541,53 @@ namespace ConsoleApplication2
 
             return z;
         }
-        
+
+        //Searches the Rewards arraylist
+        private int searchRewardsArrayList(string x)
+        {
+            int z;
+
+            for (z = 0; z < rewardList.Count; z++)
+            {
+                Rewards Temp = (Rewards)userList[z];
+
+                if (Temp.getName().Equals(x))
+                {
+                    break;
+                }
+            }
+
+            return z;
+        }
+
+        //Searches the Pizza arraylist
+        private int searchPizzaArrayList(string x)
+        {
+            int z;
+
+            for (z = 0; z < pizzaList.Count; z++)
+            {
+                Pizza Temp = (Pizza)userList[z];
+
+                if (Temp.getName().Equals(x))
+                {
+                    break;
+                }
+            }
+
+            return z;
+        }
+
         //Method to add score to a users profle
         private void addScore(string x)
         {
-            int z = searchArrayList(x);
+            int z = searchUserArrayList(x);
 
             ListedUsers Temp = (ListedUsers)userList[z];
 
             Temp.increaseScore();
         }
-        
+
         //test class for type
         private int classTest(int x)
         {
