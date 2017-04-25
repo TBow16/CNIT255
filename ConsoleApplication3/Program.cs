@@ -182,12 +182,13 @@ namespace ConsoleApplication2
         //After a certian level users are upgraded
         public class UpgradedUser : ListedUsers
         {
-            private bool extrasPermissions;
+            private bool extrasPermissions = true;
 
-            public UpgradedUser()
+            public bool getPermission()
             {
-                extrasPermissions = true;
+                return this.extrasPermissions;
             }
+
         }
 
         //Way of seperating admins from users
@@ -197,7 +198,12 @@ namespace ConsoleApplication2
 
             public MasterUser()
             {
-                controlval = true;                
+                controlval = true;
+            }
+
+            public bool getControl()
+            {
+                return this.controlval;
             }
         }
 
