@@ -190,6 +190,44 @@ namespace ConsoleApplication2
             }
 
         }
+        
+        //Names of nearby pizza places
+        public class Pizza
+        {
+            private string Name;
+            private string Address;
+            private string PhoneNumber;
+
+            public void setName(string x)
+            {
+                Name = x;
+            }
+
+            public void setAddress(string x)
+            {
+                Address = x;
+            }
+
+            public void setPhone(string x)
+            {
+                PhoneNumber = x;
+            }
+
+            public string getName()
+            {
+                return this.Name;
+            }
+
+            public string getAddress()
+            {
+                return this.Address;
+            }
+
+            public string getPhone()
+            {
+                return this.PhoneNumber;
+            }
+        }
 
         //Way of seperating admins from users
         public class MasterUser : UpgradedUser
