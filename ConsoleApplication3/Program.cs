@@ -83,6 +83,16 @@ namespace ConsoleApplication2
             {
                 return this.levelRequirement;
             }
+            
+            public void setName(string x)
+            {
+                name = x;
+            }
+
+            public void setlevel(int x)
+            {
+                levelRequirement = x;
+            }
         }
 
         //Rewards that can only be used once
@@ -503,6 +513,39 @@ namespace ConsoleApplication2
 
                     await e.Channel.SendMessage(results);
 
+                });
+            
+            //add Unique Reward
+            cService.CreateCommand("NewUniqueReward")
+                .Description("Creates a new reward with the perameters of a name and level requirement and a limit of uses")
+                .Parameter("Name", ParameterType.Required)
+                .Parameter("Level", ParameterType.Required)
+                .Parameter("Limit", ParameterType.Required)
+                .Do(async (e) =>
+                {
+                    string Name = e.GetArg("Name");
+                    int Level;
+                    int limit;
+
+                    if (int.TryParse(e.GetArg("Level"), out Level) == false)
+                    {
+                        await e.Channel.SendMessage("Invaild Level");
+                    }
+
+                    if (int.TryParse(e.GetArg("Limit"), out limit) == false)
+                    {
+                        await e.Channel.SendMessage("Invaild Limit");
+                    }
+
+                    UniqueRewards x = new UniqueRewards();
+
+                    x.setName(Name);
+                    x.setlevel(Level);
+                    x.setLimit(limit);
+
+                    rewardList.Add(x);
+
+                    await e.Channel.SendMessage("Reward has been added");
                 });
             
         }
