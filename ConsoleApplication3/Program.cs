@@ -242,6 +242,18 @@ namespace ConsoleApplication2
         //Names of nearby pizza places
         public class Pizza
         {
+            public Pizza()
+            {
+
+            }
+
+            public Pizza(string x, string y, string z)
+            {
+                Name = x;
+                Address = y;
+                PhoneNumber = z;
+            }
+            
             private string Name;
             private string Address;
             private string PhoneNumber;
@@ -583,6 +595,64 @@ namespace ConsoleApplication2
 
                         var result = $"Congratulations {e.User.Mention}! You have gained {amount} score.";
                         await e.Channel.SendMessage(result);
+                    }
+                });
+            
+            //adds pizza place
+            cService.CreateCommand("addpizza")
+                .Description("Add a pizza place to the list")
+                .Parameter("Name", ParameterType.Required)
+                .Parameter("Address", ParameterType.Required)
+                .Parameter("Phone", ParameterType.Required)
+                .Do(async (e) =>
+                {
+                    string name = e.GetArg("Name");
+                    string address = e.GetArg("Address");
+                    string phone = e.GetArg("Phone");
+
+                    Pizza x = new Pizza(name, address, phone);
+
+                    pizzaList.Add(x);
+
+                    await e.Channel.SendMessage("Your pizza location has been added to the last.");
+                });
+
+            //lists pizza places
+            cService.CreateCommand("listpizza")
+                .Description("Lists the pizza places on the list")
+                .Do(async (e) =>
+                {
+                    int y = pizzaList.Count;
+
+                    for(int x = 0; x < y; x++)
+                    {
+                        Pizza temp = (Pizza)pizzaList[x];
+
+                        string a = temp.getName();
+
+                        await e.Channel.SendMessage(a);
+                    }
+                });
+
+            //gives pizza place info
+            cService.CreateCommand("Selectpizza")
+                .Description("Gives the information for the selected pizza place.")
+                .Parameter("Name", ParameterType.Required)
+                .Do(async (e) =>
+                {
+                    string x = e.GetArg("Name");
+                    int y = searchPizzaArrayList(x);
+                    if (y == pizzaList.Count)
+                    {
+                        await e.Channel.SendMessage("Invaid pizza location");
+                    }
+                    else
+                    {
+                        Pizza temp = (Pizza)pizzaList[y];
+
+                        var Result = $"Name: {temp.getName()} Phone: {temp.getPhone()} Address: {temp.getAddress()}";
+
+                        await e.Channel.SendMessage(Result);
                     }
                 });
 
